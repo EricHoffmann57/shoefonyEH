@@ -1,0 +1,9 @@
+{%  extends 'layout.html.twig' %}
+
+{% block title %}Contact | {{ parent() }} {% endblock %}
+
+{% block content %}
+{% for people in contact %}
+<p>Hello {{ people.firstname }},{{ people.lastname}} !</p>
+{% endfor %}
+{% endblock %}

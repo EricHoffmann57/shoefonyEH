@@ -2,12 +2,24 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
+use App\Mailer\ContactMailer;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\Contact;
+use App\Form\ContactType;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+
 
 class MainController extends AbstractController
 {
+    private ContactMailer $mailer;
+
+    public function __construct(ContactMailer $mailer){
+        $this->mailer = $mailer;
+    }
+
     /**
      * @Route("/", name="main_homepage", methods={"GET"})
      */
@@ -29,12 +41,28 @@ class MainController extends AbstractController
     }
 
     /**
-     * @Route("/contact", name="main_contact", methods={"GET"})
+     * @Route("/contact", name="main_contact", methods={"GET","POST"})
+     * @param Request $request
+     * @return Response
      */
-    public function contact():Response
+    public function contact(Request $request):Response
     {
-        return $this->render('main/contact.html.twig', [
-            'controller_name' => 'MainController',
-        ]);
-    }
+
+        $contact = new Contact();
+        $form = $this->createForm(ContactType::class, $contact);
+
+        //demane au formulaire d'interpréter la request
+        $form->handleRequest($request);
+
+        //dans le cas de la soumission d'un formulaire valide
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->mailer->send($contact);
+            $this->addFlash('success','Merci votre demande a bien été prise en compte.');
+            //actions a effectuer après envoi du formulaire
+            return $this->redirectToRoute('main_contact');
+        }
+            return $this->render('main/contact.html.twig', [
+                'form' => $form->createView()
+            ]);
+        }
 }
