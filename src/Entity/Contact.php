@@ -1,92 +1,112 @@
 <?php
 
-declare(strict_types=1);
 namespace App\Entity;
-use Symfony\Component\Validator\Constraints as Assert;
 
+use DateTime;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(repositoryClass="App\Repository\ContactRepository")
+ * @ORM\Table(name="app_contact")
+ */
 class Contact
 {
-     #[Assert\NotBlank(message:"Ce champ ne peut être vide")]
-     private ?string $lastname = null;
-
-    #[Assert\NotBlank(message:"Ce champ ne peut être vide")]
-     private ?string $firstname = null;
-
-    #[Assert\NotBlank(message:"Ce champ ne peut être vide")]
-    #[Assert\Email(message:"Ce champ doit être une adresse mail valide")]
-     private ?string $email = null;
-
-    #[Assert\NotBlank(message:"Ce champ ne peut être vide")]
-    #[Assert\Length(min: 25, minMessage:"Ce message est trop court")]
-     private ?string $message = null;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
 
     /**
-     * @return string|null
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez entrer votre prénom.")
      */
-    public function getMessage(): ?string
+    private $firstName;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez entrer votre nom.")
+     */
+    private $lastName;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez entrer votre email.")
+     * @Assert\Email(message="L'email {{ value }} n'est pas valide.")
+     */
+    private $email;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text")
+     * @Assert\NotBlank(message="Veuillez entrer un message.")
+     * @Assert\Length(min=25, minMessage="Votre message doit faire au moins {{ limit }} caractères.")
+     */
+    private $message;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    public function __construct()
     {
-        return $this->message;
+        $this->createdAt = new \DateTime();
     }
 
-    /**
-     * @param string|null $message
-     * @return Contact
-     */
-    public function setMessage(?string $message): Contact
-    {
-        $this->message = $message;
+    // ID
+    public function getId(): ?int {
+        return $this->id;
+    }
+
+    // FirstName
+    public function getFirstName(): ?string {
+        return $this->firstName;
+    }
+    public function setFirstName(string $firstName): self {
+        $this->firstName = $firstName;
         return $this;
     }
 
-    public function getLastname(): string
-    {
-        return $this->lastname;
+    // LastName
+    public function getLastName(): ?string {
+        return $this->lastName;
     }
-
-    /**
-     * @param string $lastname
-     * @return Contact
-     */
-    public function setLastname(string $lastname): Contact
-    {
-        $this->lastname = $lastname;
+    public function setLastName(string $lastName): self {
+        $this->lastName = $lastName;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
+    // Email
+    public function getEmail(): ?string {
         return $this->email;
     }
-
-    /**
-     * @param string $email
-     * @return Contact
-     */
-    public function setEmail(string $email): Contact
-    {
+    public function setEmail(string $email): self {
         $this->email = $email;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFirstname(): string
-    {
-        return $this->firstname;
+    // Message
+    public function getMessage(): ?string {
+        return $this->message;
     }
-
-    /**
-     * @param string $firstname
-     * @return Contact
-     */
-    public function setFirstname(string $firstname): Contact
-    {
-        $this->firstname = $firstname;
+    public function setMessage(string $message): self {
+        $this->message = $message;
         return $this;
     }
 
+    // CreatedAt
+    public function getCreatedAt(): ?\DateTime {
+        return $this->createdAt;
+    }
+    public function setCreatedAt(\DateTime $createdAt): self {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
 }

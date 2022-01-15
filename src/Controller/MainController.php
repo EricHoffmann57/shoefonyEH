@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Mailer\ContactMailer;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,8 +16,11 @@ use Symfony\Component\HttpFoundation\Request;
 class MainController extends AbstractController
 {
     private ContactMailer $mailer;
+    private $em;
 
-    public function __construct(ContactMailer $mailer){
+    public function __construct(EntityManagerInterface $em, ContactMailer $mailer)
+    {
+        $this->em = $em;
         $this->mailer = $mailer;
     }
 
@@ -47,7 +51,6 @@ class MainController extends AbstractController
      */
     public function contact(Request $request):Response
     {
-
         $contact = new Contact();
         $form = $this->createForm(ContactType::class, $contact);
 
@@ -56,6 +59,9 @@ class MainController extends AbstractController
 
         //dans le cas de la soumission d'un formulaire valide
         if ($form->isSubmitted() && $form->isValid()) {
+                $this->em->persist($contact);
+                $this->em->flush();
+
             $this->mailer->send($contact);
             $this->addFlash('success','Merci votre demande a bien été prise en compte.');
             //actions a effectuer après envoi du formulaire
