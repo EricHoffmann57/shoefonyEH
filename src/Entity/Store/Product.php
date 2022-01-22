@@ -21,12 +21,12 @@ class Product
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name=null;
 
     /**
      * @ORM\Column(type="text")
      */
-    private $description;
+    private ?string $description=null;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
@@ -37,6 +37,22 @@ class Product
      * @ORM\Column(type="datetime")
      */
     private $created_at;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Image::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $image;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private ?string $longDescription=null;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private ?string $slug=null;
 
     public function getId(): ?int
     {
@@ -87,6 +103,42 @@ class Product
     public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getImage(): ?Image
+    {
+        return $this->image;
+    }
+
+    public function setImage(Image $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getLongDescription(): ?string
+    {
+        return $this->longDescription;
+    }
+
+    public function setLongDescription(string $longDescription): self
+    {
+        $this->longDescription = $longDescription;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }
