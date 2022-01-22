@@ -28,13 +28,13 @@
                                 <p>{{ product.description }}</p>
                                 <p>
                                     <span class="badge">{{ product.price }}€</span>
-                                    <a href="{{ path('store_detail_product', {'id': product.id, 'slug': 'name'}) }}" class="btn btn-default">Voir la fiche</a>
+                                    <a href="{{ path('store_detail_product', {'id': product.id, 'slug': ~ product.id}) }}" class="btn btn-default">Voir la fiche</a>
                                 </p>
                             </div>
                         </div>
                     </div>
                 {% else %}
-                    <h2>Il n'y a aucun produit correspondant!</h2>
+                    <div class="alert-danger">Il n'y a aucun produit correspondant!</div>
                 {% endfor %}
 
             </div>
