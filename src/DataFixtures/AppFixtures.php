@@ -99,6 +99,7 @@ class AppFixtures extends Fixture
             }
 
             $this->manager->persist($product);
+            sleep(1);
         }
     }
 

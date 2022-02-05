@@ -21,12 +21,14 @@ class ProductRepository extends ServiceEntityRepository
 
     //get last "X" products till creation date
     public function findLastProducts(int $limit) {
+        $limit = 4;
         return $this->createQueryBuilder('p')
             ->orderBy('p.createdAt', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }
+
 
     // get products with most comments
     public function findMostCommentedProducts(int $limit) {
@@ -40,7 +42,14 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
+    public function findProductsByBrand($brand): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->where('p.brand = :brand')
+            ->setParameter('brand',$brand)
+        ;
+        return $qb->getQuery()->getresult();
+    }
     // /**
     //  * @return Product[] Returns an array of Product objects
     //  */
@@ -69,4 +78,5 @@ class ProductRepository extends ServiceEntityRepository
         ;
     }
     */
+
 }

@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Store\Brand;
 use App\Entity\Store\Product;
 use App\Repository\Store\BrandRepository;
 use App\Repository\Store\CommentRepository;
 use App\Repository\Store\ProductRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -18,10 +20,11 @@ class StoreController extends AbstractController
         private BrandRepository $brandRepository,
         private CommentRepository $commentRepository
     )
-    {}
+    {
+    }
 
     /**
-     * @Route("/store/product/list", name="store_list_product", methods={"GET"})
+     * @Route("/store/product/list", name="store_list_products", methods={"GET"})
      */
     public function productList(): Response
     {
@@ -29,14 +32,19 @@ class StoreController extends AbstractController
 
         return $this->render('store/product_list.html.twig', [
             'controller_name' => 'StoreController',
-            'products' => $products
+            'products' => $products,
+            'brandId'  => null
         ]);
     }
 
     /**
      * @Route("/store/product/{id}/details/{slug}", name="store_detail_product", requirements={"id"="\d+"}, methods={"GET"})
+     * @param int $id
+     * @param string $slug
+     * @param string $brand
+     * @return Response
      */
-    public function productDetail(int $id, string $slug):Response
+    public function productDetail(int $id, string $slug): Response
     {
         $product = $this->productRepository->find($id);
         $comments = $this->commentRepository->findBy(['product' => $product]);
@@ -56,7 +64,35 @@ class StoreController extends AbstractController
             'controller_name' => 'StoreController',
             'product' => $product,
             'comments' => $comments,
-            'slug' => $slug
+            'slug' => $slug,
+        ]);
+    }
+    #[Route('/store/product/brand/{brandId}', name: 'store_list_products_by_brand', requirements: ['brandId'=>"\d+"],methods: 'GET')]
+    public function findProductsByBrand(int $brandId): Response
+    {
+        $brand = $this->brandRepository->find($brandId);
+        if($brand === null) {
+            throw new NotFoundHttpException();
+        }
+
+        $products = $this->productRepository->findBy(['brand'=>$brand]);
+
+        return $this->render('store/product_list.html.twig', [
+            'brand' => $brand,
+            'brandId' => $brand->getId(),
+            'products' => $products,
+        ]);
+
+    }
+
+
+
+    public function listBrands(): Response
+    {
+        $brands = $this->brandRepository->findAll();
+        return $this->render('store/_list_brands.html.twig', [
+            'brands' => $brands,
+            'brandId' => null,
         ]);
     }
 }

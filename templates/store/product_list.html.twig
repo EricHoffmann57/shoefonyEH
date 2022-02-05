@@ -4,14 +4,9 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-3">
-            <p class="lead">Nos marques</p>
-            <div class="list-group">
-                <a href="#" class="list-group-item active">Toutes les marques</a>
-                <a href="#" class="list-group-item">Adidas</a>
-                <a href="#" class="list-group-item">Asics</a>
-                <a href="#" class="list-group-item">Nike</a>
-                <a href="#" class="list-group-item">Puma</a>
+        <div class="row">
+            <div class="col-md-3">
+                {{ render(controller('App\\Controller\\StoreController::listBrands', {'brandId': brandId ?? null})) }}
             </div>
         </div>
 
@@ -22,7 +17,7 @@
                 {% for product in products %}
                     <div class="col-md-4 col-sm-6 hero-feature">
                         <div class="thumbnail">
-                            <img src="{{ asset('assets/img/products/' ~ product.image.url)  }}" class="img-fluid img-responsive" alt="{{ product.name }}">
+                            <img src="{{ asset('assets/img/products/' ~ product.image.url)  }}" class="img-fluid img-responsive" alt="{{ product.image.alt }}">
                             <div class="caption">
                                 <h5 class="text-primary">{{ product.brand.name }}</h5>
                                 <h3>{{ product.name | capitalize }}</h3>

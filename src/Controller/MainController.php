@@ -28,9 +28,12 @@ class MainController extends AbstractController
      * @Route("/", name="main_homepage", methods={"GET"})
      */
     public function homepage(): Response
-    {
+    {   $mostCommentedProducts = $this->productRepository->findMostCommentedProducts(4);
         $lastProducts = $this->productRepository->findLastProducts(4);
-        $mostCommentedProducts = $this->productRepository->findMostCommentedProducts(4);
+
+        foreach ($lastProducts as $product){
+            $product ->getImage();
+        }
 
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
